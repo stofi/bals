@@ -13,7 +13,7 @@ import { Leva } from 'leva'
 import Scene from './objets/Scene'
 
 export default function Experience() {
-  const qualitySettings = [1 / 4, 1 / 2, 1, 2]
+  const qualitySettings = [1 / 4, 1 / 2, 1]
   const [qualityIndex, setQualityIndex] = useState(1)
 
   const handleQualityChange = (quality: -1 | 0 | 1) => {
