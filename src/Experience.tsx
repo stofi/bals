@@ -24,7 +24,7 @@ export default function Experience() {
   return (
     <>
       <Suspense>
-        <Leva hidden={false} />
+        <Leva hidden={true} />
         <Canvas
           flat={false}
           shadows={true}
