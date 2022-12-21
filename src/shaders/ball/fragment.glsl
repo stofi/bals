@@ -26,6 +26,8 @@ uniform float uT_8;
 // varying vec2 vUv;
 // varying vec4 vNormal;
 
+varying vec3 vPos;
+
 float hue2rgb(float f1, float f2, float hue) {
   if(hue < 0.) {
     hue += 1.0;
@@ -102,8 +104,60 @@ vec2 mapUv(vec2 st, float f) {
   return st;
 }
 
+vec3 uvToSphere(vec2 uv) {
+  float lon = uv.x * 2.0 * PI - PI; // Longitude, in radians
+  float lat = uv.y * PI - PI * 0.5; // Latitude, in radians
+  float x = cos(lat) * cos(lon);
+  float y = cos(lat) * sin(lon);
+  float z = sin(lat);
+  return vec3(x, y, z);
+}
+vec2 sphereToUv(vec3 pos) {
+  float lon = atan(pos.y, pos.x); // Longitude, in radians
+  float lat = asin(pos.z); // Latitude, in radians
+  float u = (lon + PI) / (2.0 * PI); // Range: 0 to 1
+  float v = (lat + PI * 0.5) / PI; // Range: 0 to 1
+  return vec2(u, v);
+}
+
+mat3 R(vec3 n, float c, float s) {
+  return mat3(c + n.x * n.x * (1.0 - c), n.x * n.y * (1.0 - c) - n.z * s, n.x * n.z * (1.0 - c) + n.y * s, n.y * n.x * (1.0 - c) + n.z * s, c + n.y * n.y * (1.0 - c), n.y * n.z * (1.0 - c) - n.x * s, n.z * n.x * (1.0 - c) - n.y * s, n.z * n.y * (1.0 - c) + n.x * s, c + n.z * n.z * (1.0 - c));
+}
+
+vec3 rotateVector(vec3 v, vec3 axis, float angle) {
+  // Normalize the rotation axis
+  vec3 n = normalize(axis);
+
+  // Compute sine and cosine of angle
+  float s = sin(angle);
+  float c = cos(angle);
+
+  mat3 m_ = R(n, c, s);
+
+  // Rotate the vector
+  return m_ * v;
+}
+
+vec2 rotateSphereUv(vec2 uv, vec3 axis, float angle) {
+  // Convert the UV coordinate to a position on the unit sphere
+  vec3 v = uvToSphere(uv);
+
+  // Rotate the position around the axis
+  v = rotateVector(v, axis, angle);
+
+  // Map the rotated position back to a UV coordinate using equirectangular mapping
+  return sphereToUv(v);
+}
+
 void main() {
   vec2 _sUv = mapUv(vUv, 4.0);
+  float _y = abs(vPos.y);
+  _y = smoothstep(0., .1, _y);
+
+  _sUv = rotateSphereUv(_sUv, vec3(1., 0., 0.), .5 * PI);
+
+  _sUv = mix(vUv, _sUv, _y);
+
   vec4 _a = texture2D(uAlbedoMap, _sUv);
   vec4 _r = texture2D(uRoughnessMap, _sUv);
 
@@ -129,5 +183,7 @@ void main() {
 
   csm_DiffuseColor = _c;
   // csm_DiffuseColor = _a;
-  // csm_DiffuseColor = vec4(vec3(_rN), 1.0);
+  // csm_DiffuseColor = vec4(vec3(_sUv, 0.), 1.0);
+
+  // csm_DiffuseColor = vec4(vec3(_y), 1.0);
 }

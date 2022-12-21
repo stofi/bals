@@ -24,17 +24,17 @@ export default function Experience() {
   return (
     <>
       <Suspense>
-        <Leva hidden={true} />
+        <Leva hidden={false} />
         <Canvas
           flat={false}
           shadows={true}
           dpr={qualitySettings[qualityIndex]}
           camera={{
-            position: [-0.1, 0.1, -0.1],
+            position: [0.1, 0.1, 0.1],
             frustumCulled: true,
           }}
         >
-          <color args={['lightblue']} attach='background' />
+          <color args={['#7c3c2c']} attach='background' />
           <Suspense>
             <EffectComposer>
               <Bloom></Bloom>
@@ -42,16 +42,7 @@ export default function Experience() {
             </EffectComposer>
             <Physics gravity={[0, 0, 0]}>
               <Scene onChangeQuality={handleQualityChange} />
-              <RigidBody
-                type={'fixed'}
-                includeInvisible={true}
-                colliders={'ball'}
-                scale={0.5}
-              >
-                <mesh visible={false}>
-                  <sphereBufferGeometry args={[1, 8, 8]} />
-                </mesh>
-              </RigidBody>
+
               {/* <Debug /> */}
             </Physics>
           </Suspense>

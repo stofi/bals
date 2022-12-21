@@ -3,21 +3,12 @@ import { useMemo, useRef } from 'react'
 
 import { Environment, OrbitControls, useHelper } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Attractor } from '@react-three/rapier'
+import { Attractor, RigidBody } from '@react-three/rapier'
 
 import { useControls } from 'leva'
 
 import Ball from './Ball'
 
-// Red: (255, 0, 0)
-// Orange: (255, 165, 0)
-// Yellow: (255, 255, 0)
-// Peach: (255, 229, 180)
-// Coral: (255, 127, 80)
-// Salmon: (250, 128, 114)
-// Tomato: (255, 99, 71)
-// Maroon: (128, 0, 0)
-// Brown: (139, 69, 19)
 const colors = [
   '#0000ff',
   '#a500ff',
@@ -65,7 +56,7 @@ export default function Scene({
   const randomRadius = useMemo(() => {
     return Array(count)
       .fill(0)
-      .map((_, i) => Math.random() * 0.7 + 0.3)
+      .map((_, i) => Math.random() * 0.6 + 0.1)
   }, [])
 
   const randomStart = useMemo(() => {
@@ -123,11 +114,24 @@ export default function Scene({
     <>
       <OrbitControls makeDefault enablePan={false} enableZoom={false} />
 
-      <directionalLight ref={lightRef} castShadow position={[4, 5, 2]} />
+      <directionalLight
+        ref={lightRef}
+        castShadow
+        position={[4, 5, 2]}
+        shadow-camera-near={0.1}
+        shadow-camera-far={20}
+        shadow-camera-left={-4}
+        shadow-camera-right={4}
+        shadow-camera-top={4}
+        shadow-camera-bottom={-4}
+        shadow-mapSize-width={1024 * 2}
+        shadow-mapSize-height={1024 * 2}
+        shadow-bias={-0.0001}
+      />
 
       {/* <hemisphereLight intensity={0.5} args={['lightblue', 'lightgreen']} /> */}
 
-      <Environment preset='dawn' blur={1} background={true}></Environment>
+      <Environment preset='night' blur={1} background={false}></Environment>
 
       {/* <Ball color={color} radius={1} /> */}
       <Attractor
@@ -136,6 +140,16 @@ export default function Scene({
         type='linear'
         position={[0, 0, 0]}
       />
+      <RigidBody
+        type={'fixed'}
+        includeInvisible={true}
+        colliders={'ball'}
+        scale={0.4}
+      >
+        <mesh visible={false}>
+          <sphereBufferGeometry args={[1, 8, 8]} />
+        </mesh>
+      </RigidBody>
       {balls.map((props, i) => (
         <Ball key={i} {...props} />
       ))}

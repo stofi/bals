@@ -18,6 +18,7 @@ uniform float uT_7;
 uniform float uT_8;
 
 // varying vec2 vUv;
+varying vec3 vPos;
 
 vec3 combineNormals(vec3 currentNormal, vec4 sampledNormal) {
   return normalize(currentNormal + 2.0 * (sampledNormal.xyz - vec3(0.5)));
@@ -29,5 +30,6 @@ void main() {
 
   // csm_Normal = _normal.xyz;
   vUv = uv;
+  vPos = position;
 
 }
