@@ -29,12 +29,10 @@ export default function Ball(props: IBallProps) {
   })
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    console.log('click', e.point)
-    console.log('click', cameraPosition)
     const v = new THREE.Vector3()
     v.subVectors(e.point, cameraPosition)
     v.normalize()
-    v.multiplyScalar(2)
+    v.multiplyScalar(5)
     bodyRef.current?.applyImpulse(v)
   }
 

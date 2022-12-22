@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { Suspense, useState } from 'react'
 
 import { Canvas, useFrame } from '@react-three/fiber'
@@ -30,7 +31,7 @@ export default function Experience() {
           shadows={true}
           dpr={qualitySettings[qualityIndex]}
           camera={{
-            position: [0.1, 0.1, 0.1],
+            position: [3, 3, 3],
             frustumCulled: true,
           }}
         >
@@ -40,6 +41,8 @@ export default function Experience() {
               <Bloom></Bloom>
               {/* <DepthOfField focusDistance={1}></DepthOfField> */}
             </EffectComposer>
+            <fog attach='fog' args={['#7c3c2c', 12, 16]} />
+
             <Physics gravity={[0, 0, 0]}>
               <Scene onChangeQuality={handleQualityChange} />
 

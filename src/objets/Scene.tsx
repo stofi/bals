@@ -62,7 +62,7 @@ export default function Scene({
   const randomStart = useMemo(() => {
     return Array(count)
       .fill(0)
-      .map((_, i) => distributePointsOnSphere(count, 2)[i].toArray())
+      .map((_, i) => distributePointsOnSphere(count, 16)[i].toArray())
   }, [])
 
   const balls = useMemo(
@@ -79,7 +79,7 @@ export default function Scene({
 
   const { range, strength } = useControls({
     range: { value: 1000, min: 0, max: 1000 },
-    strength: { value: 10, min: 0, max: 100 },
+    strength: { value: 1, min: 0, max: 100 },
   })
 
   let smoothDelta = 1 / 30
@@ -140,7 +140,7 @@ export default function Scene({
         type='linear'
         position={[0, 0, 0]}
       />
-      <RigidBody
+      {/* <RigidBody
         type={'fixed'}
         includeInvisible={true}
         colliders={'ball'}
@@ -149,7 +149,7 @@ export default function Scene({
         <mesh visible={false}>
           <sphereBufferGeometry args={[1, 8, 8]} />
         </mesh>
-      </RigidBody>
+      </RigidBody> */}
       {balls.map((props, i) => (
         <Ball key={i} {...props} />
       ))}
